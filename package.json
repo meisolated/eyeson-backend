@@ -1,0 +1,22 @@
+{
+  "name": "eyeson",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "module": "module",
+  "scripts": {
+    "start": "tsc && node dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.17",
+    "@types/uuid": "^9.0.1",
+    "child_process": "^1.0.2",
+    "express": "^4.18.2",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.2.5"
+  }
+}
