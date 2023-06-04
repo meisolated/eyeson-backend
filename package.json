@@ -5,7 +5,7 @@
   "main": "index.js",
   "module": "module",
   "scripts": {
-    "start": "tsc && node dist/index.js"
+    "start": "rm -rf /home/cctv/EyesOn/backend/ouputffmpeg/* && tsc && node dist/index.js"
   },
   "author": "",
   "license": "ISC",

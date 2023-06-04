@@ -4,7 +4,7 @@ import { EventEmitter } from "stream"
 import { startHLSStream } from "./handler/hls.handler"
 import HLSServer from "./lib/HLS"
 const chatter = new EventEmitter()
-const something = "rtsp://admin:LetItBeMe@10.69.69.128:554/stream1"
+const something = "rtsp://admin:LetItBeMe@10.69.69.111:554/stream1"
 
 const app: Express = express()
 
@@ -13,7 +13,7 @@ app.get("/", (_req: Request, res: Response) => {
 })
 const main = async () => {
 
-    const id: any = await startHLSStream(something, "/home/cctv/EyesOn/backend/ouputffmpeg", "1", chatter)
+    const id: any = await startHLSStream(something, "/home/cctv/EyesOn/backend/ouputffmpeg", "5", chatter)
     chatter.on(id, (data) => {
         console.log(data.data)
     })
