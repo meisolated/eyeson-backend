@@ -3,6 +3,7 @@ import express, { Express, Request, Response } from "express"
 import { EventEmitter } from "stream"
 import config from "./config"
 import HLSServer from "./lib/HLS"
+import prugeHLSData from "./workers/prugeHLSData"
 import { startStreams } from "./workers/startStreams"
 const chatter = new EventEmitter()
 
@@ -17,6 +18,7 @@ const main = async () => {
         console.log(`Server running on port http://localhost:` + 3001)
     })
     startStreams(app, chatter)
+    prugeHLSData(config.HLSOutput, config.HLSPurgeInterval)
+
 }
 main()
-

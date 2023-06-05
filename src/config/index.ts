@@ -15,5 +15,6 @@ export default {
     camIdPass: {
         user: "admin",
         pass: "LetItBeMe"
-    }
+    },
+    HLSPurgeInterval: 20000,
 }

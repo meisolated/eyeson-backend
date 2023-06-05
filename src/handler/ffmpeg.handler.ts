@@ -3,9 +3,7 @@ import { EventEmitter } from "stream"
 import { v4 as uuidv4, v4 } from "uuid"
 
 export const startHLSConversion = async (input: string, outputPath: string, segmentTime: string = "1", chatter: EventEmitter) => {
-    console.log(input, outputPath, segmentTime)
     const roomId: string = uuidv4()
-
     const cmd = [
         "-rtsp_transport",
         "tcp",
@@ -40,12 +38,10 @@ export const startHLSConversion = async (input: string, outputPath: string, segm
     var output = spawn("ffmpeg", cmd)
     output.stdout.on("data", (data) => {
         const dataString = data.toString()
-        console.log(dataString)
         chatter.emit(roomId, { type: "data", data: dataString })
     })
     output.stderr.on("data", (error) => {
         const dataString = error.toString()
-        console.log(dataString)
         chatter.emit(roomId, { type: "error", data: dataString })
     })
     output.on("close", (code) => {
