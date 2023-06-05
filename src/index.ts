@@ -1,10 +1,10 @@
 
 import express, { Express, Request, Response } from "express"
 import { EventEmitter } from "stream"
-import { startHLSStream } from "./handler/hls.handler"
+import config from "./config"
 import HLSServer from "./lib/HLS"
+import { startStreams } from "./workers/startStreams"
 const chatter = new EventEmitter()
-const something = "rtsp://admin:LetItBeMe@10.69.69.111:554/stream1"
 
 const app: Express = express()
 
@@ -12,18 +12,11 @@ app.get("/", (_req: Request, res: Response) => {
     res.send({ message: "Something is missing over here", code: 200 })
 })
 const main = async () => {
-
-    const id: any = await startHLSStream(something, "/home/cctv/EyesOn/backend/ouputffmpeg", "5", chatter)
-    chatter.on(id, (data) => {
-        console.log(data.data)
+    app.use("/hls", (req, res, next) => HLSServer(req, res, next, { hlsDir: config.HLSOutput }))
+    app.listen(3001, () => {
+        console.log(`Server running on port http://localhost:` + 3001)
     })
-    setTimeout(() => {
-        app.use("/hls", (req, res, next) => HLSServer(req, res, next, { hlsDir: "/home/cctv/EyesOn/backend/ouputffmpeg/" }))
-        app.listen(3001, () => {
-            console.log(`Server running on port http://localhost:` + 3001)
-        })
-    }, 1000)
-
+    startStreams(app, chatter)
 }
 main()
 
