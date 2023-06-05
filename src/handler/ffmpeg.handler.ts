@@ -2,7 +2,7 @@ import { spawn } from "child_process"
 import { EventEmitter } from "stream"
 import { v4 as uuidv4, v4 } from "uuid"
 
-export const startHLSConversion = async (input: string, outputPath: string, segmentTime: string = "1", chatter: EventEmitter) => {
+export const startHLSConversion = async (input: string, outputPath: string, segmentTime: string = "2", chatter: EventEmitter) => {
     const roomId: string = uuidv4()
     const cmd = [
         "-rtsp_transport",
@@ -17,7 +17,7 @@ export const startHLSConversion = async (input: string, outputPath: string, segm
         "-c:a",
         "aac",
         "-g", "25",
-        "-b:v", "2000k",
+        "-b:v", "4000k",
         "-fflags", "+nobuffer",
         "-muxdelay", "0.1",
         "-max_muxing_queue_size", "1024",

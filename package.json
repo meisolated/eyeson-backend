@@ -6,8 +6,7 @@
   "module": "module",
   "scripts": {
     "build": "tsc",
-    "start": "rm -rf /home/eyeson/eyeson-backend/ouputffmpeg/* && tsc && node dist/index.js",
-    "purgeHLS": "rm -rf /home/eyeson/eyeson-backend/ouputffmpeg/*",
+    "start": " tsc && node dist/index.js",
     "pm2:start": "pm2 start dist/index.js --name eyeson-backend",
     "run:test": "tsc && node dist/test.js"
   },

@@ -4,7 +4,7 @@ export default {
         two: "/home/eyeson/recordings/"
     },
     HLSOutput:
-        "/home/eyeson/eyeson-backend/ouputffmpeg/",
+        "/home/eyeson/eyeson-backend/HLS/",
 
     diskName: {
         one: "/dev/sdb1",
@@ -16,5 +16,5 @@ export default {
         user: "admin",
         pass: "LetItBeMe"
     },
-    HLSPurgeInterval: 20000,
+    HLSPurgeInterval: 1000 * 60 * 10
 }

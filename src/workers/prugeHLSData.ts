@@ -1,5 +1,14 @@
 import fs from "fs"
 
+export const purgeHLSDataBeforeStart = (HLSOutput: string) => {
+    //  get all folders in HLSOutput
+    const folders = fs.readdirSync(HLSOutput)
+    //  delete all folders
+    folders.forEach(folder => {
+        fs.rmSync(HLSOutput + folder, { recursive: true, force: true })
+    })
+}
+
 export default (HLSOutput: string, HLSPurgeInterval: number) => {
     setInterval(() => {
         console.log("purging HLS data")

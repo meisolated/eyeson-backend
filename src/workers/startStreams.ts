@@ -17,7 +17,7 @@ export const startStreams = async (app: Express, chatter: EventEmitter) => {
         }
         const roomId: any = await startHLSConversion(
             config.rtmpsTemplate(config.camIdPass.user, config.camIdPass.pass, ip),
-            outputPath, "5", chatter
+            outputPath, "4", chatter
         )
         onlineCams.push(ip)
         console.log(roomId)
@@ -31,7 +31,7 @@ export const startStreams = async (app: Express, chatter: EventEmitter) => {
         })
     })
 
-    app.get("/cams", (_req, res) => {
+    app.get("/home/cctv/backend/cams", (_req, res) => {
         res.send({ cams: onlineCams })
     })
 
