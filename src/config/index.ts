@@ -1,20 +1,16 @@
 export default {
     storageBuckets: {
-        one: "/home/recordings/",
-        two: "/home/eyeson/recordings/"
+        one: { path: "/home/recordings/", diskName: "/dev/sdb1" },
+        two: { path: "/home/eyeson/recordings/", diskName: "/dev/sdc1" }
     },
-    HLSOutput:
-        "/home/eyeson/eyeson-backend/HLS/",
-
-    diskName: {
-        one: "/dev/sdb1",
-        two: "/dev/sdc1"
-    },
+    HLSOutput: "/home/eyeson/eyeson-backend/HLS/",
     camIps: ["10.69.69.111", "10.69.69.127"],
     rtmpsTemplate: (user: string, pass: string, ip: string) => `rtsp://${user}:${pass}@${ip}:554/stream1`,
     camIdPass: {
         user: "admin",
         pass: "LetItBeMe"
     },
-    HLSPurgeInterval: 1000 * 60 * 10
+    HLSTimeLength: "1",
+    MP4SegmentLength: (60 * 60).toString(),
+    HLSPurgeInterval: 1000 * 60 * 5
 }

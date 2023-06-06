@@ -2,12 +2,11 @@ import { Express } from "express"
 import fs from "fs"
 import { EventEmitter } from "stream"
 import config from "../config"
-import { startHLSConversion } from "../handler/ffmpeg.handler"
+import { startRTSPtoHLSConversion } from "../handler/ffmpeg.handler"
 
-
-const cams = config.camIps
 
 export const startStreams = async (app: Express, chatter: EventEmitter) => {
+    const cams = config.camIps
     var onlineCams: string[] = []
     cams.forEach(async ip => {
         console.log("starting stream for ip: " + ip)
@@ -15,9 +14,9 @@ export const startStreams = async (app: Express, chatter: EventEmitter) => {
         if (!fs.existsSync(outputPath)) {
             fs.mkdirSync(outputPath)
         }
-        const roomId: any = await startHLSConversion(
+        const roomId: any = await startRTSPtoHLSConversion(
             config.rtmpsTemplate(config.camIdPass.user, config.camIdPass.pass, ip),
-            outputPath, "4", chatter
+            outputPath, config.HLSTimeLength, config.MP4SegmentLength, chatter
         )
         onlineCams.push(ip)
         console.log(roomId)

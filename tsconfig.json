@@ -8,7 +8,8 @@
   "outDir": "./dist",
   "moduleResolution": "node",
   "forceConsistentCasingInFileNames": true,
-  "strict": true
+  "strict": true,
+  "typeRoots": ["./src/@types"]
  },
  "include": ["src"]
 }

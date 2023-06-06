@@ -19,7 +19,7 @@ export default (HLSOutput: string, HLSPurgeInterval: number) => {
             const filteredFiles = files.filter(file => file.split(".")[1] !== "m3u8")
             const fileNumbers = filteredFiles.map(file => parseInt(file.split("_")[1].split(".")[0]))
             const max = Math.max(...fileNumbers)
-            const notToDelete = [max, max - 1]
+            const notToDelete = [max, max - 5]
             filteredFiles.forEach(file => {
                 // delete all files except notToDelete
                 if (!notToDelete.includes(parseInt(file.split("_")[1].split(".")[0]))) {
