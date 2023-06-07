@@ -3,6 +3,8 @@ import { EventEmitter } from "stream"
 import { v4 as uuidv4, v4 } from "uuid"
 
 export const startRTSPtoHLSConversion = async (input: string, outputPath: string, hlsTime: string = "2", mp4Segment: string, chatter: EventEmitter) => {
+    var lastRequest = Date.now()
+    var currentStatus = "running"
     const roomId: string = uuidv4()
     const cmd = [
         "-rtsp_transport",
@@ -66,7 +68,24 @@ export const startRTSPtoHLSConversion = async (input: string, outputPath: string
             output = spawn("ffmpeg", cmd)
             chatter.emit(roomId, { type: "started", data: 0 })
         }
+        else if (data.tell === "currently_requesting") {
+            if (currentStatus === "running") {
+                lastRequest = Date.now()
+            }
+            if (currentStatus === "stopped") {
+                currentStatus = "running"
+                output = spawn("ffmpeg", cmd)
+                chatter.emit(roomId, { type: "started", data: 0 })
+            }
+        }
     })
+    setInterval(() => {
+        if (Date.now() - lastRequest > 20000 && currentStatus === "running") {
+            output.kill()
+            currentStatus = "stopped"
+            chatter.emit(roomId, { type: "stopped", data: 0 })
+        }
+    }, 1000)
     return roomId
 }
 

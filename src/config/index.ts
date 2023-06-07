@@ -4,7 +4,7 @@ export default {
         two: { path: "/home/eyeson/recordings/", diskName: "/dev/sdc1" }
     },
     HLSOutput: "/home/eyeson/eyeson-backend/HLS/",
-    camIps: ["10.69.69.111", "10.69.69.127"],
+    camIps: ["10.69.69.112", "10.69.69.128"],
     rtmpsTemplate: (user: string, pass: string, ip: string) => `rtsp://${user}:${pass}@${ip}:554/stream1`,
     camIdPass: {
         user: "admin",
