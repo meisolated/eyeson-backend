@@ -6,7 +6,6 @@ import { getUseableDisk } from "../handler/storage.handler"
 
 export const startRecording = async (chatter: EventEmitter) => {
     const cams = config.camIps
-    var onlineCams: string[] = []
     const buckets: StoreageBucketData = await getUseableDisk().then((buckets: StoreageBucketData[]) => buckets[0])
     cams.forEach(async ip => {
         console.log("starting recording for ip: " + ip)
@@ -18,8 +17,6 @@ export const startRecording = async (chatter: EventEmitter) => {
             config.rtmpsTemplate(config.camIdPass.user, config.camIdPass.pass, ip),
             outputPath, config.MP4SegmentLength, chatter
         )
-        onlineCams.push(ip)
-        console.log(roomId)
         chatter.on(roomId, (data: any) => {
             if (data.type === "data") {
             }
@@ -27,5 +24,16 @@ export const startRecording = async (chatter: EventEmitter) => {
                 console.log("ip: " + ip + " closed")
             }
         })
+        setInterval(() => {
+            // check storage space
+            getUseableDisk().then((Buckets: StoreageBucketData[]) => {
+                if (Buckets[0].mountedOn !== buckets.mountedOn) {
+                    console.log("storage changed")
+                    buckets.mountedOn = Buckets[0].mountedOn
+                    outputPath.replace(buckets.mountedOn, Buckets[0].mountedOn)
+                    chatter.emit(roomId, { type: "storageChanged", data: outputPath })
+                }
+            })
+        }, 1000)
     })
 }

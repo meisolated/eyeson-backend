@@ -30,7 +30,7 @@ export const startStreams = async (app: Express, chatter: EventEmitter) => {
         })
     })
 
-    app.get("/home/cctv/backend/cams", (_req, res) => {
+    app.get("/home/eyeson/backend/cams", (_req, res) => {
         res.send({ cams: onlineCams })
     })
 

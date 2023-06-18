@@ -9,32 +9,50 @@ export const startRTSPtoHLSConversion = async (input: string, outputPath: string
     const cmd = [
         "-rtsp_transport",
         "tcp",
-        "-max_delay", "500",
+        "-max_delay",
+        "500",
         "-i",
         input,
         "-c:v",
-        "libx264",//libx264
-        "-preset", "ultrafast",
-        "-tune", "zerolatency",
+        "libx264", //libx264
+        "-preset",
+        "ultrafast",
+        "-tune",
+        "zerolatency",
         "-c:a",
         "aac",
-        "-g", "20",
-        "-b:v", "2000k",
-        "-fflags", "+nobuffer",
-        "-muxdelay", "0.1",
-        "-max_muxing_queue_size", "1024",
-        "-map", "0",
+        "-g",
+        "20",
+        "-b:v",
+        "4000k",
+        "-fflags",
+        "+nobuffer",
+        "-muxdelay",
+        "0.1",
+        "-max_muxing_queue_size",
+        "1024",
+        "-map",
+        "0",
         "-f",
         "segment",
-        "-threads", "1",
-        "-crf", "22",
-        "-vf", "scale=1920:1080",
+        "-threads",
+        "1",
+        "-crf",
+        "24",
+        "-vf",
+        // mobile scale 
+        "scale=800:480",
+        // "scale=1280:720",
+        // "scale=trunc(iw/2)*2:trunc(ih/2)*2",
+        // "scale=1920:1080",
         "-hls_time",
         hlsTime,
-        "-segment_list_flags", "live",
+        "-segment_list_flags",
+        "live",
         "-segment_format",
         "mpegts",
-        "-segment_list_size", "1",
+        "-segment_list_size",
+        "1",
         "-segment_list",
         `${outputPath}/playlist.m3u8`,
         `${outputPath}/output_%03d.ts`,
@@ -60,6 +78,7 @@ export const startRTSPtoHLSConversion = async (input: string, outputPath: string
     })
 
     chatter.on("HLSWorker", (data) => {
+
         if (data.ask === "stop") {
             output.kill()
             chatter.emit(roomId, { type: "closed", data: 0 })
@@ -67,25 +86,29 @@ export const startRTSPtoHLSConversion = async (input: string, outputPath: string
             console.log("starting HLS conversion")
             output = spawn("ffmpeg", cmd)
             chatter.emit(roomId, { type: "started", data: 0 })
-        }
-        else if (data.tell === "currently_requesting") {
+        } else if (data.tell === "currently_requesting") {
             if (currentStatus === "running") {
                 lastRequest = Date.now()
             }
-            if (currentStatus === "stopped") {
+            else if (currentStatus === "stopped") {
                 currentStatus = "running"
                 output = spawn("ffmpeg", cmd)
                 chatter.emit(roomId, { type: "started", data: 0 })
             }
         }
     })
-    setInterval(() => {
-        if (Date.now() - lastRequest > 20000 && currentStatus === "running") {
-            output.kill()
-            currentStatus = "stopped"
-            chatter.emit(roomId, { type: "stopped", data: 0 })
-        }
-    }, 1000)
+    // setInterval(() => {
+    //     // check is ffmpeg is running
+    //     if (output.killed) {
+    //         currentStatus = "stopped"
+    //         chatter.emit(roomId, { type: "stopped", data: 0 })
+    //     }
+    //     if (Date.now() - lastRequest > 60000 && currentStatus === "running") {
+    //         output.kill()
+    //         currentStatus = "stopped"
+    //         chatter.emit(roomId, { type: "stopped", data: 0 })
+    //     }
+    // }, 1000)
     return roomId
 }
 
@@ -95,15 +118,24 @@ export const startRTSPtoMP4Conversion = async (input: string, outputPath: string
     const cmd = [
         "-rtsp_transport",
         "tcp",
-        "-i", input,
-        "-c:v", "copy",
-        "-c:a", "aac",
-        "-f", "segment",
-        "-segment_time", segmentTime,
-        "-segment_format", "mp4",
-        "-reset_timestamps", "1",
-        "-strftime", "1",
-        `${outputPath}/output_%Y-%m-%d_%H-%M-%S_from_%s_to_%e.mp4`
+        "-i",
+        input,
+        "-c:v",
+        "copy",
+        "-c:a",
+        "aac",
+        "-f",
+        "segment",
+        "-segment_time",
+        segmentTime,
+        "-segment_format",
+        "mp4",
+        "-reset_timestamps",
+        "1",
+        "-strftime",
+        "1",
+        "-y",
+        `${outputPath}/output_%Y-%m-%d_%H-%M-%S.mp4`,
     ]
     var output = spawn("ffmpeg", cmd)
     output.stdout.on("data", (data) => {
@@ -119,11 +151,14 @@ export const startRTSPtoMP4Conversion = async (input: string, outputPath: string
         chatter.emit(roomId, { type: "close", data: code })
     })
     chatter.on(roomId, (data) => {
-        if (data.ask === "restart") {
+        if (data.type == "storageChanged") {
+            console.log("storage changed")
             output.kill()
-            output = spawn("ffmpeg", cmd, { detached: true, shell: true })
+            const changedOutputPath = data.data
+            // replace the last element from the array
+            cmd[cmd.length - 1] = `${changedOutputPath}/output_%Y-%m-%d_%H-%M-%S.mp4`
+            output = spawn("ffmpeg", cmd)
         }
-
     })
     return roomId
 }
